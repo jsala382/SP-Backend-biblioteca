@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,8 +41,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public List<AuthorDTO> listBookAuthors(String nameAuthor) {
-        List<Author> authors = authorRepository.findAll().stream().filter(author -> author.getName().contains(nameAuthor))
-                .collect(Collectors.toList());
+            Optional<Author> authors = authorRepository.findAll().stream().filter(author -> author.getName().contains(nameAuthor)).findFirst();
         if (authors.isEmpty()) {
             System.out.println(" No existe el autor ");
         }
