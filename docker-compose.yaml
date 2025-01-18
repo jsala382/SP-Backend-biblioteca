@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  biblioteca-backend:
+    build: .
+    container_name: biblioteca-backend
+    ports:
+      - "8080:8080"
+    networks:
+      - myred
+    depends_on:
+      - mysql-biblioteca-container
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-biblioteca-container:3306/biblioteca
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.MySQLDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - LOGGING_LEVEL_ORG_HIBERNATE_SQL=debug
+      - SPRING_JACKSON_SERIALIZATION_WRITE_DATES_AS_TIMESTAMPS=false
+
+  mysql-biblioteca-container:
+    image: mysql:latest
+    container_name: mysql-biblioteca-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: biblioteca
+    ports:
+      - "3307:3306"
+    networks:
+      - myred
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+networks:
+  myred:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
